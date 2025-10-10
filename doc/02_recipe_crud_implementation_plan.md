@@ -53,11 +53,13 @@ rails db:migrate
 #### 3.1 RecipesリソースとPromptとのネスト
 ```ruby
 resources :prompts do
-  resources :recipes, only: [:new, :create]
+  resources :recipes, shallow: true
 end
-
-resources :recipes, only: [:show, :edit, :update, :destroy]
 ```
+
+shallow: trueにより以下のルートが生成される:
+- `new`, `create`: `/prompts/:prompt_id/recipes/...` (ネスト)
+- `show`, `edit`, `update`, `destroy`: `/recipes/:id/...` (シンプル)
 
 ### 4. コントローラーの実装
 
