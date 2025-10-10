@@ -25,16 +25,21 @@ class Prompt < ApplicationRecord
 
   def call_llm_api
     client = OpenAI::Client.new
-    client.chat(
-      parameters: {
-        model: "gpt-5-mini",
-        messages: [
-          { role: "system", content: system_prompt },
-          { role: "user", content: prompt }
-        ],
-        temperature: 0.7
-      }
-    )
+    begin
+      client.chat(
+        parameters: {
+          model: "gpt-5-mini",
+          messages: [
+            { role: "system", content: system_prompt },
+            { role: "user", content: prompt }
+          ]
+        }
+      )
+    rescue => e
+      Rails.logger.error("OpenAI API Error (Recipe): #{e.class} - #{e.message}")
+      Rails.logger.error("Error details: #{e.inspect}") if e.respond_to?(:response)
+      raise
+    end
   end
 
   def system_prompt
