@@ -1,4 +1,4 @@
-<%= form_with(model: recipe, local: true) do |form| %>
+<%= form_with(model: recipe, url: recipe.persisted? ? recipe_path(recipe) : prompt_recipes_path(@prompt), local: true) do |form| %>
   <% if recipe.errors.any? %>
     <div class="alert alert-danger">
       <h4><%= pluralize(recipe.errors.count, "件") %>のエラーがあります</h4>
