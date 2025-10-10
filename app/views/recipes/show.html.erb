@@ -1,0 +1,40 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><%= @recipe.title %></h1>
+    <div class="btn-group" role="group">
+      <%= link_to "編集", edit_recipe_path(@recipe), class: "btn btn-primary" %>
+      <%= button_to "削除", recipe_path(@recipe), method: :delete, data: { turbo_confirm: "本当に削除しますか？" }, class: "btn btn-danger" %>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <div class="text-muted">
+      関連プロンプト: <%= link_to @recipe.prompt.title, prompt_path(@recipe.prompt) %>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">材料</h5>
+      <p class="card-text" style="white-space: pre-wrap;"><%= @recipe.ingredients %></p>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">作り方</h5>
+      <p class="card-text" style="white-space: pre-wrap;"><%= @recipe.instructions %></p>
+    </div>
+  </div>
+
+  <div class="card-footer text-muted">
+    作成日時: <%= @recipe.created_at.strftime("%Y年%m月%d日 %H:%M") %>
+    <% if @recipe.updated_at != @recipe.created_at %>
+      | 更新日時: <%= @recipe.updated_at.strftime("%Y年%m月%d日 %H:%M") %>
+    <% end %>
+  </div>
+
+  <div class="mt-3">
+    <%= link_to "プロンプトに戻る", prompt_path(@recipe.prompt), class: "btn btn-outline-secondary" %>
+  </div>
+</div>

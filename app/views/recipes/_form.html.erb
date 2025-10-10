@@ -1,0 +1,32 @@
+<%= form_with(model: recipe, url: recipe.persisted? ? recipe_path(recipe) : prompt_recipes_path(@prompt), local: true) do |form| %>
+  <% if recipe.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(recipe.errors.count, "件") %>のエラーがあります</h4>
+      <ul class="mb-0">
+        <% recipe.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :title, "タイトル", class: "form-label" %>
+    <%= form.text_field :title, class: "form-control", placeholder: "レシピのタイトルを入力" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :ingredients, "材料", class: "form-label" %>
+    <%= form.text_area :ingredients, class: "form-control", rows: 8, placeholder: "材料を入力" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :instructions, "作り方", class: "form-label" %>
+    <%= form.text_area :instructions, class: "form-control", rows: 10, placeholder: "作り方を入力" %>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "キャンセル", recipe.persisted? ? recipe_path(recipe) : prompt_path(@prompt), class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

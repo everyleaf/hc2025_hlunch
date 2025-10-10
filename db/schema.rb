@@ -10,11 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_10_021659) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_10_025857) do
   create_table "prompts", force: :cascade do |t|
     t.string "title"
     t.text "prompt"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "recipes", force: :cascade do |t|
+    t.integer "prompt_id", null: false
+    t.string "title"
+    t.text "ingredients"
+    t.text "instructions"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["prompt_id"], name: "index_recipes_on_prompt_id"
+  end
+
+  add_foreign_key "recipes", "prompts"
 end

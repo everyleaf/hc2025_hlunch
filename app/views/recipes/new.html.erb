@@ -1,0 +1,11 @@
+<div class="container mt-4">
+  <h1 class="mb-4">新規レシピ作成</h1>
+
+  <div class="mb-3">
+    <div class="text-muted">
+      プロンプト: <%= @prompt.title %>
+    </div>
+  </div>
+
+  <%= render "form", recipe: @recipe %>
+</div>
