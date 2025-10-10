@@ -167,12 +167,12 @@ Railsサーバーを起動して、ブラウザで動作確認
 
 ## 完了条件
 
-- [ ] dotenv-rails gem追加完了
-- [ ] .envファイル作成完了（APIキー設定済み）
-- [ ] .gitignoreに.env追加確認
-- [ ] OpenAI initializer更新完了
-- [ ] Promptモデルのモデル名変更完了
-- [ ] テストが全てパスすることを確認
+- [x] dotenv-rails gem追加完了
+- [x] .envファイル作成完了（APIキー設定済み）
+- [x] .gitignoreに.env追加確認
+- [x] OpenAI initializer更新完了
+- [x] Promptモデルのモデル名変更完了
+- [x] テストが全てパスすることを確認
 - [ ] ブラウザで動作確認完了（OpenAI APIと連携）
 
 ## ロールバック手順
