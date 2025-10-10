@@ -7,22 +7,26 @@
 ## 機能概要
 
 - プロンプト詳細ページから「LLMでレシピ生成」ボタンを押す
-- LLM（OpenAI API）にプロンプトを送信
+- LM Studio経由でローカルLLMにプロンプトを送信
 - 生成されたレシピ（タイトル、材料、作り方）をパース
 - 新規レシピとしてデータベースに保存
 - 生成されたレシピの詳細ページにリダイレクト
 
 ## 必要な準備
 
+### LM Studio
+- LM Studioでローカルサーバーを起動
+- デフォルトエンドポイント: `http://localhost:1234/v1/chat/completions`
+
 ### 環境変数
-- OpenAI APIキーの設定
-  - `.env`ファイルに `OPENAI_API_KEY` を設定
+- LM StudioのエンドポイントURL（カスタマイズする場合）
+  - `.env`ファイルに `LLM_API_ENDPOINT` を設定（オプション）
   - gitignoreに`.env`を追加
 
 ### Gem追加
 ```ruby
 gem 'dotenv-rails'
-gem 'ruby-openai'
+gem 'faraday'  # HTTP client
 ```
 
 ## 実装手順
@@ -32,12 +36,12 @@ gem 'ruby-openai'
 #### 1.1 Gemfile更新
 ```ruby
 gem 'dotenv-rails', groups: [:development, :test]
-gem 'ruby-openai'
+gem 'faraday'
 ```
 
-#### 1.2 .envファイル作成
+#### 1.2 .envファイル作成（オプション）
 ```
-OPENAI_API_KEY=your_api_key_here
+LLM_API_ENDPOINT=http://localhost:1234/v1/chat/completions
 ```
 
 #### 1.3 .gitignoreに追加
@@ -50,24 +54,37 @@ OPENAI_API_KEY=your_api_key_here
 bundle install
 ```
 
-### 2. OpenAI設定
+### 2. LLM API設定
 
-#### 2.1 initializer作成
-`config/initializers/openai.rb`を作成し、OpenAIクライアントを設定
+#### 2.1 定数定義
+- デフォルトエンドポイント: `http://localhost:1234/v1/chat/completions`
+- 環境変数から上書き可能にする
 
 ### 3. レシピ生成サービスクラス作成
 
 #### 3.1 RecipeGeneratorService
 - `app/services/recipe_generator_service.rb`を作成
-- OpenAI APIを呼び出してレシピを生成
+- LM Studio APIを呼び出してレシピを生成
 - レスポンスをパースしてRecipeオブジェクトを作成
 - エラーハンドリング（API呼び出し失敗、パース失敗など）
 
 主なメソッド:
 - `initialize(prompt)`: プロンプトを受け取る
 - `generate`: レシピ生成を実行してRecipeオブジェクトを返す
-- `call_openai_api`: OpenAI APIを呼び出す
+- `call_llm_api`: LM Studio APIを呼び出す（Faraday使用）
 - `parse_response(response)`: レスポンスをパースしてRecipeの属性に変換
+
+APIリクエスト形式（OpenAI互換）:
+```json
+{
+  "model": "local-model",
+  "messages": [
+    {"role": "system", "content": "システムプロンプト"},
+    {"role": "user", "content": "ユーザーのプロンプト"}
+  ],
+  "temperature": 0.7
+}
+```
 
 ### 4. コントローラーの実装
 
@@ -145,27 +162,27 @@ LLMに渡すプロンプトの構造を設計:
 
 ## 実装の注意点
 
-1. **APIキー管理**: APIキーは環境変数で管理し、gitにコミットしない
-2. **エラーハンドリング**: API呼び出し失敗、レート制限、パース失敗などに対応
-3. **タイムアウト**: API呼び出しにタイムアウトを設定
+1. **LM Studio起動確認**: ローカルサーバーが起動しているか確認
+2. **エラーハンドリング**: API呼び出し失敗、接続エラー、パース失敗などに対応
+3. **タイムアウト**: API呼び出しにタイムアウトを設定（LLM生成は時間がかかる）
 4. **レスポンスパース**: JSONパースが失敗した場合の処理
 5. **ユーザーフィードバック**: 生成中の状態をユーザーに表示
-6. **コスト管理**: API使用量の監視
-7. **テスト**: 外部API呼び出しをモック化
-8. **セキュリティ**: ユーザー入力のサニタイズ
+6. **テスト**: 外部API呼び出しをモック化（WebMockなど）
+7. **セキュリティ**: ユーザー入力のサニタイズ
+8. **エンドポイント設定**: 環境変数で柔軟に変更可能にする
 
 ## 完了条件
 
-- [ ] 環境変数設定完了
+- [ ] LM Studio起動確認
+- [ ] 環境変数設定完了（オプション）
 - [ ] Gem追加とインストール完了
-- [ ] OpenAI設定完了
 - [ ] RecipeGeneratorService実装完了
 - [ ] RecipesControllerのgenerateアクション実装完了
 - [ ] ルーティング設定完了
 - [ ] ビュー更新完了
 - [ ] サービスのテスト完了
 - [ ] Request specのテスト完了
-- [ ] ブラウザで動作確認完了
+- [ ] ブラウザで動作確認完了（LM Studioと連携）
 
 ## 今後の拡張案
 
