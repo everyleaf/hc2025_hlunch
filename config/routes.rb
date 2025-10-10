@@ -12,5 +12,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "prompts#index"
 
-  resources :prompts
+  resources :prompts do
+    resources :recipes, shallow: true
+  end
 end
