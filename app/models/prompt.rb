@@ -16,7 +16,7 @@ class Prompt < ApplicationRecord
     client = OpenAI::Client.new
     client.chat(
       parameters: {
-        model: "local-model",
+        model: "gpt-5-mini",
         messages: [
           { role: "system", content: system_prompt },
           { role: "user", content: prompt }
