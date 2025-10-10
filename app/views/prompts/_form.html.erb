@@ -1,0 +1,27 @@
+<%= form_with(model: prompt, local: true) do |form| %>
+  <% if prompt.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(prompt.errors.count, "件") %>のエラーがあります</h4>
+      <ul class="mb-0">
+        <% prompt.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :title, "タイトル", class: "form-label" %>
+    <%= form.text_field :title, class: "form-control", placeholder: "プロンプトのタイトルを入力" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :prompt, "プロンプト本文", class: "form-label" %>
+    <%= form.text_area :prompt, class: "form-control", rows: 10, placeholder: "プロンプトの内容を入力" %>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "キャンセル", prompt.persisted? ? prompt_path(prompt) : prompts_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>
