@@ -199,21 +199,44 @@ LLMに渡すプロンプトの構造を設計:
   - 正常系: レシピが正しく生成される
   - 異常系: API呼び出し失敗時
   - 異常系: レスポンスパース失敗時
-  - WebMockでAPI呼び出しをモック化
+  - **テスト方針**: WebMockなどの外部gemは使わず、Minitestの`stub`メソッドで`OpenAI::Client#chat`をスタブ化
+
+実装例:
+```ruby
+test "レシピが正しく生成される" do
+  prompt = Prompt.create!(title: "テスト", prompt: "カレーのレシピ")
+
+  mock_response = {
+    "choices" => [{
+      "message" => {
+        "content" => '{"title":"カレー","ingredients":"材料A","instructions":"手順1"}'
+      }
+    }]
+  }
+
+  OpenAI::Client.any_instance.stub(:chat, mock_response) do
+    recipe = prompt.generate_recipe
+    assert_equal "カレー", recipe.title
+    assert_equal "材料A", recipe.ingredients
+    assert_equal "手順1", recipe.instructions
+  end
+end
+```
 
 #### 8.2 Request spec追加
 - `test/requests/recipes_test.rb`に追加
   - generate: レシピが生成されて保存される
   - generate: API失敗時にエラーメッセージが表示される
+  - 同様に`OpenAI::Client#chat`をスタブ化してテスト
 
 ## 実装の注意点
 
 1. **LM Studio起動確認**: ローカルサーバーが起動しているか確認
 2. **エラーハンドリング**: API呼び出し失敗、接続エラー、パース失敗などに対応
 3. **タイムアウト**: API呼び出しにタイムアウトを設定（LLM生成は時間がかかる）
-4. **レスポンスパース**: JSONパースが失敗した場合の処理
+4. **レスポンスパース**: JSONパースが失敗した場合の処理、LLMが余分なテキストを出力する場合への対応
 5. **ユーザーフィードバック**: 生成中の状態をユーザーに表示
-6. **テスト**: 外部API呼び出しをモック化（WebMockなど）
+6. **テスト**: Minitestの`stub`メソッドで`OpenAI::Client#chat`をスタブ化（外部gemは不要）
 7. **セキュリティ**: ユーザー入力のサニタイズ
 8. **エンドポイント設定**: 環境変数で柔軟に変更可能にする
 
