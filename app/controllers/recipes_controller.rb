@@ -54,7 +54,7 @@ class RecipesController < ApplicationController
   end
 
   def set_prompt
-    @prompt = Prompt.find(params[:prompt_id])
+    @prompt = Prompt.find(params[:prompt_id] || params[:id])
   end
 
   def recipe_params
