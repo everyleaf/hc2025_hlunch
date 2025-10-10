@@ -38,6 +38,28 @@ class PromptsController < ApplicationController
     redirect_to prompts_url, notice: "プロンプトを削除しました。"
   end
 
+  def compose
+    prompt_ids = params[:prompt_ids] || []
+
+    if prompt_ids.size < 2
+      redirect_to prompts_path, alert: "少なくとも2つのプロンプトを選択してください。"
+      return
+    end
+
+    begin
+      @composed = Prompt.compose_prompts(prompt_ids)
+      @selected_prompts = Prompt.where(id: prompt_ids).order(:id)
+      render :compose_form
+    rescue => e
+      redirect_to prompts_path, alert: "プロンプトの合成に失敗しました: #{e.message}"
+    end
+  end
+
+  def compose_form
+    # composeアクションから呼ばれるため、直接のアクセスは不要
+    redirect_to prompts_path
+  end
+
   private
 
   def set_prompt
