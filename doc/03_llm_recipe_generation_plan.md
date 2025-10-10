@@ -16,18 +16,15 @@
 
 ### LM Studio
 - LM Studioでローカルサーバーを起動
-- デフォルトエンドポイント: `http://localhost:1234/v1/chat/completions`
-
-### 環境変数
-- LM StudioのエンドポイントURL（カスタマイズする場合）
-  - `.env`ファイルに `LLM_API_ENDPOINT` を設定（オプション）
-  - gitignoreに`.env`を追加
+- デフォルトエンドポイント: `http://localhost:1234/v1/`
+- 任意のモデルを読み込んでサーバーを起動
 
 ### Gem追加
 ```ruby
-gem 'dotenv-rails'
-gem 'faraday'  # HTTP client
+gem 'ruby-openai'
 ```
+
+Note: `ruby-openai` gemはカスタムエンドポイントをサポートしているため、LM Studioでも使用可能
 
 ## 実装手順
 
@@ -35,55 +32,54 @@ gem 'faraday'  # HTTP client
 
 #### 1.1 Gemfile更新
 ```ruby
-gem 'dotenv-rails', groups: [:development, :test]
-gem 'faraday'
+gem 'ruby-openai'
 ```
 
-#### 1.2 .envファイル作成（オプション）
-```
-LLM_API_ENDPOINT=http://localhost:1234/v1/chat/completions
-```
-
-#### 1.3 .gitignoreに追加
-```
-.env
-```
-
-#### 1.4 bundle install
+#### 1.2 bundle install
 ```bash
 bundle install
 ```
 
-### 2. LLM API設定
+### 2. OpenAI gem設定
 
-#### 2.1 定数定義
-- デフォルトエンドポイント: `http://localhost:1234/v1/chat/completions`
-- 環境変数から上書き可能にする
+#### 2.1 initializer作成
+`config/initializers/openai.rb`を作成
+
+```ruby
+OpenAI.configure do |config|
+  config.uri_base = ENV.fetch("OPENAI_API_BASE", "http://localhost:1234/v1/")
+  config.access_token = "dummy" # LM Studioはトークン不要だが設定は必須
+  config.request_timeout = 240 # LLM生成は時間がかかるためタイムアウトを長めに
+end
+```
 
 ### 3. レシピ生成サービスクラス作成
 
 #### 3.1 RecipeGeneratorService
 - `app/services/recipe_generator_service.rb`を作成
-- LM Studio APIを呼び出してレシピを生成
+- `ruby-openai` gemを使ってLM Studio APIを呼び出してレシピを生成
 - レスポンスをパースしてRecipeオブジェクトを作成
 - エラーハンドリング（API呼び出し失敗、パース失敗など）
 
 主なメソッド:
 - `initialize(prompt)`: プロンプトを受け取る
 - `generate`: レシピ生成を実行してRecipeオブジェクトを返す
-- `call_llm_api`: LM Studio APIを呼び出す（Faraday使用）
+- `call_openai_api`: OpenAI gem（LM Studio接続）を使ってAPI呼び出し
 - `parse_response(response)`: レスポンスをパースしてRecipeの属性に変換
 
-APIリクエスト形式（OpenAI互換）:
-```json
-{
-  "model": "local-model",
-  "messages": [
-    {"role": "system", "content": "システムプロンプト"},
-    {"role": "user", "content": "ユーザーのプロンプト"}
-  ],
-  "temperature": 0.7
-}
+使用例:
+```ruby
+client = OpenAI::Client.new
+response = client.chat(
+  parameters: {
+    model: "local-model",
+    messages: [
+      { role: "system", content: "システムプロンプト" },
+      { role: "user", content: "ユーザーのプロンプト" }
+    ],
+    temperature: 0.7
+  }
+)
 ```
 
 ### 4. コントローラーの実装
@@ -174,8 +170,8 @@ LLMに渡すプロンプトの構造を設計:
 ## 完了条件
 
 - [ ] LM Studio起動確認
-- [ ] 環境変数設定完了（オプション）
-- [ ] Gem追加とインストール完了
+- [ ] ruby-openai gem追加とインストール完了
+- [ ] OpenAI initializer設定完了
 - [ ] RecipeGeneratorService実装完了
 - [ ] RecipesControllerのgenerateアクション実装完了
 - [ ] ルーティング設定完了
