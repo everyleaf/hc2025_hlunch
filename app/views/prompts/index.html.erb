@@ -4,31 +4,57 @@
     <%= link_to "新規作成", new_prompt_path, class: "btn btn-primary" %>
   </div>
 
-  <% if @prompts.any? %>
-    <div class="list-group">
-      <% @prompts.each do |prompt| %>
-        <div class="list-group-item">
-          <div class="d-flex w-100 justify-content-between align-items-start">
-            <div class="flex-grow-1">
-              <h5 class="mb-1">
-                <%= link_to prompt.title, prompt_path(prompt), class: "text-decoration-none" %>
-              </h5>
-              <small class="text-muted">
-                <%= prompt.created_at.strftime("%Y年%m月%d日 %H:%M") %>
-              </small>
-            </div>
-            <div class="btn-group ms-3" role="group">
-              <%= link_to "詳細", prompt_path(prompt), class: "btn btn-sm btn-outline-secondary" %>
-              <%= link_to "編集", edit_prompt_path(prompt), class: "btn btn-sm btn-outline-primary" %>
-              <%= button_to "削除", prompt_path(prompt), method: :delete, data: { turbo_confirm: "本当に削除しますか？" }, class: "btn btn-sm btn-outline-danger" %>
+  <%= form_with url: compose_prompts_path, method: :post, local: true do |f| %>
+    <div class="mb-3">
+      <%= button_tag type: "submit", class: "btn btn-success",
+          onclick: "return validateSelection()" do %>
+        <i class="bi bi-magic"></i> 選択したプロンプトを合成
+      <% end %>
+      <small class="text-muted ms-2">（2つ以上選択してください）</small>
+    </div>
+
+    <% if @prompts.any? %>
+      <div class="list-group">
+        <% @prompts.each do |prompt| %>
+          <div class="list-group-item">
+            <div class="d-flex align-items-start">
+              <div class="form-check me-3">
+                <%= check_box_tag 'prompt_ids[]', prompt.id, false,
+                    class: 'form-check-input prompt-checkbox' %>
+              </div>
+              <div class="flex-grow-1">
+                <h5 class="mb-1">
+                  <%= link_to prompt.title, prompt_path(prompt), class: "text-decoration-none" %>
+                </h5>
+                <p class="mb-1 text-muted"><%= truncate(prompt.prompt, length: 100) %></p>
+                <small class="text-muted">
+                  レシピ数: <%= prompt.recipes.count %> |
+                  作成日: <%= prompt.created_at.strftime("%Y年%m月%d日") %>
+                </small>
+              </div>
+              <div class="btn-group ms-3">
+                <%= link_to "詳細", prompt_path(prompt), class: "btn btn-sm btn-outline-secondary" %>
+                <%= link_to "編集", edit_prompt_path(prompt), class: "btn btn-sm btn-outline-primary" %>
+              </div>
             </div>
           </div>
-        </div>
-      <% end %>
-    </div>
-  <% else %>
-    <div class="alert alert-info">
-      プロンプトがまだ登録されていません。
-    </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="alert alert-info">
+        プロンプトがまだ登録されていません。
+      </div>
+    <% end %>
   <% end %>
 </div>
+
+<script>
+  function validateSelection() {
+    const checked = document.querySelectorAll('.prompt-checkbox:checked');
+    if (checked.length < 2) {
+      alert('少なくとも2つのプロンプトを選択してください。');
+      return false;
+    }
+    return true;
+  }
+</script>
