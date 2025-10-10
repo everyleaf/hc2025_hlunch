@@ -41,7 +41,17 @@ class Prompt < ApplicationRecord
 
   def parse_llm_response(response)
     content = response.dig("choices", 0, "message", "content")
-    json_data = JSON.parse(content)
+
+    # JSONブロックを抽出（```json ... ``` または { ... } の形式）
+    json_str = if content =~ /```json\s*(\{.*?\})\s*```/m
+      $1
+    elsif content =~ /(\{.*\})/m
+      $1
+    else
+      content
+    end
+
+    json_data = JSON.parse(json_str)
 
     {
       title: json_data["title"],
