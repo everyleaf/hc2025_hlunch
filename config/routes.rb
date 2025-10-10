@@ -13,6 +13,10 @@ Rails.application.routes.draw do
   root "prompts#index"
 
   resources :prompts do
+    collection do
+      get "compose_form"
+      post "compose"
+    end
     member do
       post "generate_recipe", to: "recipes#generate"
     end
