@@ -41,6 +41,7 @@ class Prompt < ApplicationRecord
 
   def parse_llm_response(response)
     content = response.dig("choices", 0, "message", "content")
+    Rails.logger.info("LLM Response Content: #{content}")
 
     # JSONブロックを抽出（```json ... ``` または { ... } の形式）
     json_str = if content =~ /```json\s*(\{.*?\})\s*```/m
@@ -50,6 +51,8 @@ class Prompt < ApplicationRecord
     else
       content
     end
+
+    Rails.logger.info("Extracted JSON String: #{json_str}")
 
     json_data = JSON.parse(json_str)
 
