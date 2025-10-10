@@ -53,33 +53,55 @@ OpenAI.configure do |config|
 end
 ```
 
-### 3. レシピ生成サービスクラス作成
+### 3. Promptモデルにレシピ生成メソッド追加
 
-#### 3.1 RecipeGeneratorService
-- `app/services/recipe_generator_service.rb`を作成
+#### 3.1 Promptモデルに `generate_recipe` メソッド追加
+- `app/models/prompt.rb`に直接実装
 - `ruby-openai` gemを使ってLM Studio APIを呼び出してレシピを生成
-- レスポンスをパースしてRecipeオブジェクトを作成
+- レスポンスをパースしてRecipeオブジェクトを返す
 - エラーハンドリング（API呼び出し失敗、パース失敗など）
 
 主なメソッド:
-- `initialize(prompt)`: プロンプトを受け取る
-- `generate`: レシピ生成を実行してRecipeオブジェクトを返す
-- `call_openai_api`: OpenAI gem（LM Studio接続）を使ってAPI呼び出し
-- `parse_response(response)`: レスポンスをパースしてRecipeの属性に変換
+- `generate_recipe`: レシピ生成を実行してRecipeオブジェクトを返す
+- `call_llm_api` (private): OpenAI gem（LM Studio接続）を使ってAPI呼び出し
+- `parse_llm_response(response)` (private): レスポンスをパースしてRecipeの属性ハッシュに変換
 
 使用例:
 ```ruby
-client = OpenAI::Client.new
-response = client.chat(
-  parameters: {
-    model: "local-model",
-    messages: [
-      { role: "system", content: "システムプロンプト" },
-      { role: "user", content: "ユーザーのプロンプト" }
-    ],
-    temperature: 0.7
-  }
-)
+prompt = Prompt.find(1)
+recipe = prompt.generate_recipe
+# => #<Recipe title: "...", ingredients: "...", instructions: "...">
+```
+
+実装イメージ:
+```ruby
+class Prompt < ApplicationRecord
+  def generate_recipe
+    response = call_llm_api
+    recipe_attrs = parse_llm_response(response)
+    recipes.build(recipe_attrs)
+  end
+
+  private
+
+  def call_llm_api
+    client = OpenAI::Client.new
+    client.chat(
+      parameters: {
+        model: "local-model",
+        messages: [
+          { role: "system", content: system_prompt },
+          { role: "user", content: prompt }
+        ],
+        temperature: 0.7
+      }
+    )
+  end
+
+  def parse_llm_response(response)
+    # JSONパース処理
+  end
+end
 ```
 
 ### 4. コントローラーの実装
@@ -87,9 +109,25 @@ response = client.chat(
 #### 4.1 RecipesController に generate アクション追加
 - `generate`: LLMでレシピ生成
   - プロンプトを取得
-  - RecipeGeneratorServiceを呼び出し
+  - `prompt.generate_recipe` を呼び出し
   - 成功時: 生成されたレシピを保存してレシピ詳細にリダイレクト
   - 失敗時: エラーメッセージを表示してプロンプト詳細に戻る
+
+実装イメージ:
+```ruby
+def generate
+  @prompt = Prompt.find(params[:prompt_id])
+  @recipe = @prompt.generate_recipe
+
+  if @recipe.save
+    redirect_to @recipe, notice: "レシピを生成しました。"
+  else
+    redirect_to @prompt, alert: "レシピの生成に失敗しました。"
+  end
+rescue => e
+  redirect_to @prompt, alert: "エラーが発生しました: #{e.message}"
+end
+```
 
 ### 5. ルーティング設定
 
@@ -122,11 +160,13 @@ end
 
 ### 7. テスト実装
 
-#### 7.1 RecipeGeneratorServiceのテスト
-- `test/services/recipe_generator_service_test.rb`
+#### 7.1 Promptモデルテストに追加
+- `test/models/prompt_test.rb`に追加
+  - `generate_recipe`メソッドのテスト
   - 正常系: レシピが正しく生成される
   - 異常系: API呼び出し失敗時
   - 異常系: レスポンスパース失敗時
+  - WebMockでAPI呼び出しをモック化
 
 #### 7.2 Request spec追加
 - `test/requests/recipes_test.rb`に追加
@@ -172,11 +212,11 @@ LLMに渡すプロンプトの構造を設計:
 - [ ] LM Studio起動確認
 - [ ] ruby-openai gem追加とインストール完了
 - [ ] OpenAI initializer設定完了
-- [ ] RecipeGeneratorService実装完了
+- [ ] Promptモデルに`generate_recipe`メソッド実装完了
 - [ ] RecipesControllerのgenerateアクション実装完了
 - [ ] ルーティング設定完了
 - [ ] ビュー更新完了
-- [ ] サービスのテスト完了
+- [ ] Promptモデルテスト完了
 - [ ] Request specのテスト完了
 - [ ] ブラウザで動作確認完了（LM Studioと連携）
 
