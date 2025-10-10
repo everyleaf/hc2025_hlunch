@@ -139,7 +139,7 @@ class Prompt < ApplicationRecord
     Rails.logger.info("LLM Compose Response Content: #{content}")
 
     # <think>タグを除去
-    content = content.gsub(/<think>.*?<\/think>/m, '')
+    content = content.gsub(/<think>.*?<\/think>/m, "")
 
     # JSONブロックを抽出
     json_str = if content =~ /```json\s*(\{.*?\})\s*```/m
