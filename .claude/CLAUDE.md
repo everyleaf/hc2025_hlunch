@@ -1,0 +1,102 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## プロジェクト概要
+
+ハルシネーション・ランチ (hlunch) - LLMを活用したレシピ生成アプリケーション
+
+### 主要機能
+- プロンプトの保存・管理
+- プロンプトからLLMを使ったレシピ生成
+- プロンプトの合成による新規プロンプト生成
+
+### データモデル
+- Prompt (title, prompt) - プロンプトを管理
+- Recipe (title, ingredients, instructions) - レシピを管理。Promptに1:Nで紐づく
+
+### 使用技術
+- Rails 8.0.2
+- SQLite3
+- Bootstrap (UI)
+- Turbo (ページ遷移の高速化のみ使用)
+
+## 開発コマンド
+
+### セットアップ
+```bash
+bin/setup                 # 初回セットアップ
+```
+
+### データベース
+```bash
+rails db:migrate          # マイグレーション実行
+rails db:rollback         # マイグレーションをロールバック
+rails db:seed             # シードデータ投入
+rails db:reset            # DB削除、再作成、マイグレーション、シード実行
+```
+
+### サーバー起動
+```bash
+bin/dev                   # 開発サーバー起動
+rails server              # Railsサーバーのみ起動
+```
+
+### テスト
+```bash
+rails test                # 全テスト実行
+rails test test/models/prompt_test.rb  # 特定ファイルのテスト実行
+rails test test/requests/prompts_test.rb  # Request specの実行
+```
+
+### コード品質
+```bash
+rubocop                   # Linter実行
+rubocop -a                # 自動修正可能な問題を修正
+```
+
+### コンソール
+```bash
+rails console             # Railsコンソール起動
+```
+
+## アーキテクチャ
+
+### ディレクトリ構造
+- `app/models/` - ActiveRecordモデル
+- `app/controllers/` - コントローラー（標準的なRails MVCパターン）
+- `app/views/` - ERBビューテンプレート
+- `db/migrate/` - データベースマイグレーション
+- `test/models/` - モデルの単体テスト
+- `test/requests/` - Request spec（コントローラーの統合テスト）
+- `doc/` - 実装計画などのドキュメント
+
+### データベース構成
+- 開発環境: `storage/development.sqlite3`
+- テスト環境: `storage/test.sqlite3`
+
+### フロントエンド
+- シンプルなHTMLとERB
+- Bootstrapを使用したレスポンシブデザイン
+- Turboによるページ遷移の高速化（デフォルト動作のみ）
+
+## 開発ガイドライン
+
+### モデル作成
+```bash
+rails generate model ModelName field:type
+```
+
+### コントローラー作成
+```bash
+rails generate controller ControllerName action1 action2
+```
+
+### テスト方針
+- モデルテスト (`test/models/`): バリデーションとアソシエーションをテスト
+- Request spec (`test/requests/`): HTTPリクエスト/レスポンスとリダイレクトをテスト
+
+### 削除リンクの書き方
+```erb
+<%= button_to "削除", prompt_path(@prompt), method: :delete, data: { turbo_confirm: "本当に削除しますか？" } %>
+```
