@@ -132,15 +132,8 @@ end
 ### 5. ルーティング設定
 
 #### 5.1 generateアクション追加
-```ruby
-resources :prompts do
-  resources :recipes, shallow: true do
-    post 'generate', on: :collection
-  end
-end
-```
 
-または
+**採用する実装: promptsのmemberに配置**
 
 ```ruby
 resources :prompts do
@@ -150,6 +143,23 @@ resources :prompts do
   resources :recipes, shallow: true
 end
 ```
+
+**採用理由:**
+1. **意味の明確さ**: 「このプロンプトからレシピを生成する」というアクションの意味が自然
+2. **URLのシンプルさ**: `POST /prompts/:id/generate_recipe` とわかりやすい
+3. **実装の一貫性**: `@prompt.generate_recipe` というモデルメソッドと対応している
+4. **ヘルパーメソッド**: `generate_recipe_prompt_path(@prompt)` で呼び出せる
+
+**不採用とした実装: recipesのcollectionに配置**
+```ruby
+resources :prompts do
+  resources :recipes, shallow: true do
+    post 'generate', on: :collection
+  end
+end
+```
+- URLが `POST /prompts/:prompt_id/recipes/generate` と長い
+- recipesリソースの操作としては論理的だが、URLが冗長
 
 ### 6. ビューの実装
 
