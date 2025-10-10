@@ -1,24 +1,24 @@
-# README
+# hlunch
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+ハルシネーション・ランチ
 
-Things you may want to cover:
+## 概要
 
-* Ruby version
+レシピ生成を目的としたLLMアプリケーション
 
-* System dependencies
+- ユーザーはプロンプトを保存できる
+- 保存したプロンプトからLLMを使ってレシピを生成し保存できる
+- プロンプト同士をLLMに合成させて新たなプロンプトを生成できる
 
-* Configuration
+## データ構造
 
-* Database creation
+- プロンプト N title, prompt
+    - レシピ 1:N title, ingredients, instructions
 
-* Database initialization
+## 実装手順
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+1. まずはLLMを経由せずにユーザーが手書きでデータのCRUDができるようにする
+  - プロンプト
+  - レシピ
+1. プロンプトを選んで、LLM経由でレシピを生成して追加できるようにする
+1. プロンプトを合成できるようにする
