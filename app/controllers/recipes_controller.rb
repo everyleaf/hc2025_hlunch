@@ -1,6 +1,6 @@
 class RecipesController < ApplicationController
   before_action :set_recipe, only: [ :show, :edit, :update, :destroy ]
-  before_action :set_prompt, only: [ :new, :create ]
+  before_action :set_prompt, only: [ :new, :create, :generate ]
 
   def new
     @recipe = @prompt.recipes.build
@@ -14,6 +14,18 @@ class RecipesController < ApplicationController
     else
       render :new, status: :unprocessable_entity
     end
+  end
+
+  def generate
+    @recipe = @prompt.generate_recipe
+
+    if @recipe.save
+      redirect_to @recipe, notice: "レシピを生成しました。"
+    else
+      redirect_to @prompt, alert: "レシピの生成に失敗しました。"
+    end
+  rescue => e
+    redirect_to @prompt, alert: "エラーが発生しました: #{e.message}"
   end
 
   def show
