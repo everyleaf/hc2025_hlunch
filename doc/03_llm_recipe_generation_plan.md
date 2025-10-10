@@ -242,14 +242,14 @@ end
 
 ## 完了条件
 
-- [ ] LM Studio起動確認
-- [ ] ruby-openai gem追加とインストール完了
-- [ ] OpenAI initializer設定完了
-- [ ] Promptモデルに`generate_recipe`メソッド実装完了
-- [ ] RecipesControllerのgenerateアクション実装完了
-- [ ] ルーティング設定完了
-- [ ] ビュー更新完了
-- [ ] Promptモデルテスト完了
+- [x] LM Studio起動確認
+- [x] ruby-openai gem追加とインストール完了
+- [x] OpenAI initializer設定完了
+- [x] Promptモデルに`generate_recipe`メソッド実装完了
+- [x] RecipesControllerのgenerateアクション実装完了
+- [x] ルーティング設定完了
+- [x] ビュー更新完了
+- [x] Promptモデルテスト完了
 - [ ] Request specのテスト完了
 - [ ] ブラウザで動作確認完了（LM Studioと連携）
 
