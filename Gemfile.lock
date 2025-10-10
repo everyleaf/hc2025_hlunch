@@ -107,6 +107,9 @@ GEM
       irb (~> 1.10)
       reline (>= 0.3.8)
     dotenv (3.1.8)
+    dotenv-rails (3.1.8)
+      dotenv (= 3.1.8)
+      railties (>= 6.1)
     drb (2.2.3)
     ed25519 (1.4.0)
     erb (5.0.3)
@@ -428,6 +431,7 @@ DEPENDENCIES
   capybara
   dartsass-rails (~> 0.5.1)
   debug
+  dotenv-rails
   importmap-rails
   jbuilder
   kamal

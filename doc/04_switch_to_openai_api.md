@@ -26,14 +26,16 @@ OPENAI_API_BASE=https://api.openai.com/v1/
 
 #### 1.2 dotenv-rails gem追加
 
-環境変数を読み込むために`dotenv-rails` gemを追加
+環境変数を読み込むために`dotenv-rails` gemを追加（開発環境のみ）
 
 ```ruby
 # Gemfile
-group :development, :test do
+group :development do
   gem 'dotenv-rails'
 end
 ```
+
+**注意**: テスト環境ではスタブを使用するため、dotenv-railsは不要
 
 ```bash
 bundle install
