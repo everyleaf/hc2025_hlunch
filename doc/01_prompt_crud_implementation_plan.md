@@ -86,8 +86,8 @@ end
     - titleが255文字を超える場合は無効
     - 正常な値の場合は有効
 
-#### 6.2 コントローラーテスト
-- `test/controllers/prompts_controller_test.rb`
+#### 6.2 Request spec
+- `test/requests/prompts_test.rb`
   - index: プロンプト一覧が表示される
   - show: プロンプト詳細が表示される
   - new: 新規作成フォームが表示される
@@ -95,13 +95,6 @@ end
   - edit: 編集フォームが表示される
   - update: プロンプトが更新される
   - destroy: プロンプトが削除される
-
-#### 6.3 システムテスト
-- `test/system/prompts_test.rb`
-  - プロンプトの作成フロー
-  - プロンプトの表示フロー
-  - プロンプトの編集フロー
-  - プロンプトの削除フロー
 
 ### 7. スタイリング
 
