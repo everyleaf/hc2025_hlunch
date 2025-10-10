@@ -1,0 +1,41 @@
+<div class="container mt-4">
+  <h1>プロンプト合成結果</h1>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">合成元のプロンプト</h5>
+    </div>
+    <div class="card-body">
+      <% @selected_prompts.each_with_index do |prompt, index| %>
+        <div class="mb-3">
+          <strong>プロンプト<%= index + 1 %>:</strong> <%= prompt.title %>
+          <p class="text-muted mb-0"><%= prompt.prompt %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">合成結果（編集可能）</h5>
+    </div>
+    <div class="card-body">
+      <%= form_with model: Prompt.new, url: prompts_path, local: true do |f| %>
+        <div class="mb-3">
+          <%= f.label :title, "タイトル", class: "form-label" %>
+          <%= f.text_field :title, value: @composed[:title], class: "form-control", required: true %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :prompt, "プロンプト本文", class: "form-label" %>
+          <%= f.text_area :prompt, value: @composed[:prompt], rows: 6, class: "form-control", required: true %>
+        </div>
+
+        <div class="d-flex gap-2">
+          <%= f.submit "保存", class: "btn btn-primary" %>
+          <%= link_to "キャンセル", prompts_path, class: "btn btn-secondary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
