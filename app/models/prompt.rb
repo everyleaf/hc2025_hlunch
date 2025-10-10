@@ -77,16 +77,21 @@ class Prompt < ApplicationRecord
   # プロンプト合成用のクラスメソッド（private）
   def self.call_compose_llm_api(prompts)
     client = OpenAI::Client.new
-    client.chat(
-      parameters: {
-        model: "gpt-5-mini",
-        messages: [
-          { role: "system", content: compose_system_prompt },
-          { role: "user", content: build_compose_user_prompt(prompts) }
-        ],
-        temperature: 0.7
-      }
-    )
+    begin
+      client.chat(
+        parameters: {
+          model: "gpt-5-mini",
+          messages: [
+            { role: "system", content: compose_system_prompt },
+            { role: "user", content: build_compose_user_prompt(prompts) }
+          ]
+        }
+      )
+    rescue => e
+      Rails.logger.error("OpenAI API Error: #{e.class} - #{e.message}")
+      Rails.logger.error("Error details: #{e.inspect}") if e.respond_to?(:response)
+      raise
+    end
   end
 
   def self.compose_system_prompt
@@ -127,6 +132,9 @@ class Prompt < ApplicationRecord
   def self.parse_compose_response(response)
     content = response.dig("choices", 0, "message", "content")
     Rails.logger.info("LLM Compose Response Content: #{content}")
+
+    # <think>タグを除去
+    content = content.gsub(/<think>.*?<\/think>/m, '')
 
     # JSONブロックを抽出
     json_str = if content =~ /```json\s*(\{.*?\})\s*```/m

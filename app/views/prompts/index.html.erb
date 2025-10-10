@@ -4,7 +4,7 @@
     <%= link_to "新規作成", new_prompt_path, class: "btn btn-primary" %>
   </div>
 
-  <%= form_with url: compose_prompts_path, method: :post, local: true do |f| %>
+  <%= form_with url: compose_prompts_path, method: :post, local: true, data: { turbo: false } do |f| %>
     <div class="mb-3">
       <%= button_tag type: "submit", class: "btn btn-success",
           onclick: "return validateSelection()" do %>
