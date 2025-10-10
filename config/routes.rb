@@ -14,7 +14,7 @@ Rails.application.routes.draw do
 
   resources :prompts do
     member do
-      post 'generate_recipe', to: 'recipes#generate'
+      post "generate_recipe", to: "recipes#generate"
     end
     resources :recipes, shallow: true
   end

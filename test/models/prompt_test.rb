@@ -33,11 +33,11 @@ class PromptTest < ActiveSupport::TestCase
     prompt = Prompt.create!(title: "テストプロンプト", prompt: "カレーのレシピを教えてください")
 
     mock_response = {
-      "choices" => [{
+      "choices" => [ {
         "message" => {
           "content" => '{"title":"カレーライス","ingredients":"玉ねぎ\nにんじん\nじゃがいも","instructions":"野菜を切る\n煮込む\nルーを入れる"}'
         }
-      }]
+      } ]
     }
 
     prompt.stub(:call_llm_api, mock_response) do
@@ -54,11 +54,11 @@ class PromptTest < ActiveSupport::TestCase
     prompt = Prompt.create!(title: "テストプロンプト", prompt: "レシピ")
 
     mock_response = {
-      "choices" => [{
+      "choices" => [ {
         "message" => {
           "content" => '<think>考え中</think>{"title":"テストレシピ","ingredients":"材料A","instructions":"手順1"}'
         }
-      }]
+      } ]
     }
 
     prompt.stub(:call_llm_api, mock_response) do
@@ -83,11 +83,11 @@ class PromptTest < ActiveSupport::TestCase
     prompt = Prompt.create!(title: "テストプロンプト", prompt: "レシピ")
 
     mock_response = {
-      "choices" => [{
+      "choices" => [ {
         "message" => {
           "content" => "これはJSONではありません"
         }
-      }]
+      } ]
     }
 
     prompt.stub(:call_llm_api, mock_response) do

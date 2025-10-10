@@ -77,11 +77,11 @@ class RecipesTest < ActionDispatch::IntegrationTest
 
   test "generate: レシピが生成されて保存される" do
     mock_response = {
-      "choices" => [{
+      "choices" => [ {
         "message" => {
           "content" => '{"title":"生成されたレシピ","ingredients":"材料X","instructions":"手順Y"}'
         }
-      }]
+      } ]
     }
 
     @prompt.define_singleton_method(:call_llm_api) { mock_response }
