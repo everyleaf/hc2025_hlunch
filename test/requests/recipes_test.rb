@@ -74,4 +74,39 @@ class RecipesTest < ActionDispatch::IntegrationTest
     end
     assert_redirected_to prompt_url(@prompt)
   end
+
+  test "generate: レシピが生成されて保存される" do
+    mock_response = {
+      "choices" => [{
+        "message" => {
+          "content" => '{"title":"生成されたレシピ","ingredients":"材料X","instructions":"手順Y"}'
+        }
+      }]
+    }
+
+    @prompt.define_singleton_method(:call_llm_api) { mock_response }
+
+    Prompt.stub(:find, @prompt) do
+      assert_difference("Recipe.count", 1) do
+        post generate_recipe_prompt_url(@prompt)
+      end
+
+      assert_redirected_to recipe_url(Recipe.last)
+      assert_equal "生成されたレシピ", Recipe.last.title
+      assert_equal "レシピを生成しました。", flash[:notice]
+    end
+  end
+
+  test "generate: API失敗時にエラーメッセージが表示される" do
+    @prompt.define_singleton_method(:call_llm_api) { raise Faraday::Error.new("接続エラー") }
+
+    Prompt.stub(:find, @prompt) do
+      assert_no_difference("Recipe.count") do
+        post generate_recipe_prompt_url(@prompt)
+      end
+
+      assert_redirected_to prompt_url(@prompt)
+      assert_match(/エラーが発生しました/, flash[:alert])
+    end
+  end
 end

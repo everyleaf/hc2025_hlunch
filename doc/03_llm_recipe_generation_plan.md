@@ -250,7 +250,7 @@ end
 - [x] ルーティング設定完了
 - [x] ビュー更新完了
 - [x] Promptモデルテスト完了
-- [ ] Request specのテスト完了
+- [x] Request specのテスト完了
 - [ ] ブラウザで動作確認完了（LM Studioと連携）
 
 ## 今後の拡張案
