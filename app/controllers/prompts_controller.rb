@@ -1,5 +1,5 @@
 class PromptsController < ApplicationController
-  before_action :set_prompt, only: [:show, :edit, :update, :destroy]
+  before_action :set_prompt, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @prompts = Prompt.all.order(created_at: :desc)
