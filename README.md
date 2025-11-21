@@ -3,7 +3,7 @@
 ハルシネーション・ランチ
 
 ![トップページ](./images/screenshot_index.png)
-![レシピ詳細ページ](./images/screenshot_recipes.png
+![レシピ詳細ページ](./images/screenshot_recipes.png)
 
 ## 開発環境セットアップ
 
