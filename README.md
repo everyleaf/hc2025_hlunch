@@ -6,7 +6,7 @@
 
 ```bash
 cp .env.example .env
-vim .env
+vim .env # OpenAIのAPIキーが必要です
 bin/dev
 ```
 
