@@ -1,5 +1,7 @@
 # hlunch
 
+![hlunch ロゴ](./images/logo.png)
+
 ハルシネーション・ランチ
 
 ![トップページ](./images/screenshot_index.png)
