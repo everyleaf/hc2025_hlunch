@@ -19,6 +19,8 @@ RSpec.describe "タイムゾーン設定" do
       )
       # SQLiteはUTCの文字列で保存される（タイムゾーン情報なし）
       expect(raw).not_to include("+09")
+      # DBのUTC値をパースするとcreated_at.utcと一致する
+      expect(Time.parse("#{raw} UTC")).to be_within(1.second).of(prompt.created_at.utc)
     end
   end
 end
