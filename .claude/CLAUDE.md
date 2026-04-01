@@ -44,9 +44,9 @@ rails server              # Railsサーバーのみ起動
 
 ### テスト
 ```bash
-rails test                # 全テスト実行
-rails test test/models/prompt_test.rb  # 特定ファイルのテスト実行
-rails test test/requests/prompts_test.rb  # Request specの実行
+bundle exec rspec                                    # 全テスト実行
+bundle exec rspec spec/models/prompt_spec.rb         # 特定ファイルのテスト実行
+bundle exec rspec spec/requests/                     # Request specの実行
 ```
 
 ### コード品質
@@ -67,8 +67,9 @@ rails console             # Railsコンソール起動
 - `app/controllers/` - コントローラー（標準的なRails MVCパターン）
 - `app/views/` - ERBビューテンプレート
 - `db/migrate/` - データベースマイグレーション
-- `test/models/` - モデルの単体テスト
-- `test/requests/` - Request spec（コントローラーの統合テスト）
+- `spec/models/` - モデルの単体テスト
+- `spec/requests/` - Request spec（コントローラーの統合テスト）
+- `spec/factories/` - FactoryBotのファクトリー定義
 - `doc/` - 実装計画などのドキュメント
 
 ### データベース構成
@@ -93,8 +94,8 @@ rails generate controller ControllerName action1 action2
 ```
 
 ### テスト方針
-- モデルテスト (`test/models/`): バリデーションとアソシエーションをテスト
-- Request spec (`test/requests/`): HTTPリクエスト/レスポンスとリダイレクトをテスト
+- モデルspec (`spec/models/`): バリデーションとアソシエーションをテスト
+- Request spec (`spec/requests/`): HTTPリクエスト/レスポンスとリダイレクトをテスト
 
 ### 削除リンクの書き方
 ```erb
