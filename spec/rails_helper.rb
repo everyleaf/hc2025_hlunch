@@ -32,6 +32,10 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
+def llm_response(content)
+  { "choices" => [ { "message" => { "content" => content } } ] }
+end
+
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
 

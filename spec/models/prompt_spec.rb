@@ -33,14 +33,9 @@ RSpec.describe Prompt, type: :model do
     let(:prompt) { create(:prompt, prompt: "カレーのレシピを教えてください") }
 
     it "レシピが正しく生成される" do
-      mock_response = {
-        "choices" => [ {
-          "message" => {
-            "content" => '{"title":"カレーライス","ingredients":"玉ねぎ\nにんじん\nじゃがいも","instructions":"野菜を切る\n煮込む\nルーを入れる"}'
-          }
-        } ]
-      }
-      allow(prompt).to receive(:call_llm_api).and_return(mock_response)
+      allow(prompt).to receive(:call_llm_api).and_return(
+        llm_response('{"title":"カレーライス","ingredients":"玉ねぎ\nにんじん\nじゃがいも","instructions":"野菜を切る\n煮込む\nルーを入れる"}')
+      )
 
       recipe = prompt.generate_recipe
       expect(recipe.title).to eq("カレーライス")
@@ -51,14 +46,9 @@ RSpec.describe Prompt, type: :model do
     end
 
     it "JSON以外のテキストが含まれていても正しくパースできる" do
-      mock_response = {
-        "choices" => [ {
-          "message" => {
-            "content" => '<think>考え中</think>{"title":"テストレシピ","ingredients":"材料A","instructions":"手順1"}'
-          }
-        } ]
-      }
-      allow(prompt).to receive(:call_llm_api).and_return(mock_response)
+      allow(prompt).to receive(:call_llm_api).and_return(
+        llm_response('<think>考え中</think>{"title":"テストレシピ","ingredients":"材料A","instructions":"手順1"}')
+      )
 
       recipe = prompt.generate_recipe
       expect(recipe.title).to eq("テストレシピ")
@@ -73,14 +63,9 @@ RSpec.describe Prompt, type: :model do
     end
 
     it "JSONパース失敗時に例外が発生する" do
-      mock_response = {
-        "choices" => [ {
-          "message" => {
-            "content" => "これはJSONではありません"
-          }
-        } ]
-      }
-      allow(prompt).to receive(:call_llm_api).and_return(mock_response)
+      allow(prompt).to receive(:call_llm_api).and_return(
+        llm_response("これはJSONではありません")
+      )
 
       expect { prompt.generate_recipe }.to raise_error(JSON::ParserError)
     end

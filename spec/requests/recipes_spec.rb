@@ -69,15 +69,10 @@ RSpec.describe "Recipes", type: :request do
 
   describe "POST /prompts/:id/generate_recipe" do
     it "レシピが生成されて保存される" do
-      mock_response = {
-        "choices" => [ {
-          "message" => {
-            "content" => '{"title":"生成されたレシピ","ingredients":"材料X","instructions":"手順Y"}'
-          }
-        } ]
-      }
-      allow(Prompt).to receive(:find).and_return(prompt)
-      allow(prompt).to receive(:call_llm_api).and_return(mock_response)
+      allow(Prompt).to receive(:find).with(prompt.id.to_s).and_return(prompt)
+      allow(prompt).to receive(:call_llm_api).and_return(
+        llm_response('{"title":"生成されたレシピ","ingredients":"材料X","instructions":"手順Y"}')
+      )
 
       expect {
         post generate_recipe_prompt_path(prompt)
@@ -90,7 +85,7 @@ RSpec.describe "Recipes", type: :request do
     end
 
     it "API失敗時にエラーメッセージが表示される" do
-      allow(Prompt).to receive(:find).and_return(prompt)
+      allow(Prompt).to receive(:find).with(prompt.id.to_s).and_return(prompt)
       allow(prompt).to receive(:call_llm_api).and_raise(Faraday::Error.new("接続エラー"))
 
       expect {
