@@ -51,9 +51,13 @@ bundle exec rspec spec/requests/                     # Request specの実行
 
 ### コード品質
 ```bash
-rubocop                   # Linter実行
-rubocop -a                # 自動修正可能な問題を修正
+bundle exec rubocop                   # Linter実行
+bundle exec rubocop -a                # 自動修正可能な問題を修正
+bundle exec brakeman --no-pager       # セキュリティスキャン
 ```
+
+YOU MUST: Rubyファイルを編集したら `bundle exec rubocop <編集したファイル>` を自動実行する
+YOU MUST: Gemfile.lockが変更されたら `bundle exec brakeman --no-pager` を自動実行する
 
 ### コンソール
 ```bash
