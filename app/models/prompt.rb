@@ -28,7 +28,7 @@ class Prompt < ApplicationRecord
     begin
       client.chat(
         parameters: {
-          model: "gpt-5-mini",
+          model: "gpt-5.4-mini",
           messages: [
             { role: "system", content: system_prompt },
             { role: "user", content: prompt }
@@ -85,7 +85,7 @@ class Prompt < ApplicationRecord
     begin
       client.chat(
         parameters: {
-          model: "gpt-5-mini",
+          model: "gpt-5.4-mini",
           messages: [
             { role: "system", content: compose_system_prompt },
             { role: "user", content: build_compose_user_prompt(prompts) }
