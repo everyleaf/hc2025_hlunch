@@ -28,6 +28,9 @@
         <%= link_to root_path, class: "navbar-brand" do %>
           <%= image_tag "logo.png", height: 56, alt: "hlunch" %>
         <% end %>
+        <% if ENV["EPHEMERAL_STORAGE"].present? %>
+          <span class="badge bg-warning text-dark">データは永続化されていません</span>
+        <% end %>
       </div>
     </nav>
     <% if flash.any? %>
