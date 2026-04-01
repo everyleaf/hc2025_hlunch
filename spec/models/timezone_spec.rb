@@ -16,12 +16,9 @@ RSpec.describe "タイムゾーン設定" do
       now = Time.current
       travel_to(now) { prompt }
       raw = ActiveRecord::Base.connection.select_value(
-        "SELECT created_at FROM prompts WHERE id = #{prompt.id}"
+        ActiveRecord::Base.sanitize_sql([ "SELECT created_at FROM prompts WHERE id = ?", prompt.id ])
       )
-      # SQLiteはUTCの文字列で保存される（タイムゾーン情報なし）
-      expect(raw).not_to include("+09")
-      # DBのUTC値をパースするとTime.currentのUTCと一致する
-      expect(Time.parse("#{raw} UTC")).to be_within(1.second).of(now.utc)
+      expect(Time.parse("#{raw} UTC")).to eq(now.utc.floor)
     end
   end
 end
